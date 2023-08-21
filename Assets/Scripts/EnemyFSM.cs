@@ -69,7 +69,7 @@ public class EnemyFSM : MonoBehaviour
                 _targetVelocity = Vector3.zero;
                 break;
             case EnemyState.Die:
-                //Die();
+                _targetVelocity = Vector3.zero;
                 break;
         }
 
@@ -185,7 +185,7 @@ public class EnemyFSM : MonoBehaviour
 
         _targetVelocity = nonYDir * moveSpeed;
 
-        if ((_originPos - nonYPos).magnitude < 1f)
+        if ((_originPos - nonYPos).magnitude < 0.1f)
         {
             CurrentState = EnemyState.Idle;
         }
@@ -193,15 +193,21 @@ public class EnemyFSM : MonoBehaviour
      
     public void DamageAction()
     {
+        if(hitableObj.Hp <= 1)
+        {
+            CurrentState = EnemyState.Die;
+            Die();
+            return;
+        }
+        if (CurrentState == EnemyState.Damaged)
+            return;
+
         if(hitableObj.Hp > 1)
         {
             CurrentState = EnemyState.Damaged;
             Damaged();
         }
-        else
-        {
-            Die();
-        }
+        
     }
 
 
@@ -247,6 +253,6 @@ public class EnemyFSM : MonoBehaviour
 
     private void OnDestroy()
     {
-        hitableObj.OnHit -= Damaged;
+        hitableObj.OnHit -= DamageAction;
     }
 }

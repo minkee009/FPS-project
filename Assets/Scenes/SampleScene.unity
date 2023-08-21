@@ -758,6 +758,7 @@ MonoBehaviour:
   cc: {fileID: 0}
   hitableObj: {fileID: 0}
   findDist: 8
+  returnDist: 20
   moveSpeed: 5
   drag: 0.1
   airAcceleration: 4
@@ -780,7 +781,7 @@ MonoBehaviour:
   maxHp: 16
   hitEffect: {fileID: 0}
   deathEffect: {fileID: 0}
-  setDestroy: 1
+  setDestroy: 0
 --- !u!1 &810388892
 GameObject:
   m_ObjectHideFlags: 0

@@ -119,7 +119,8 @@ public class MoveController : MonoBehaviour
 
         cc.Move(CurrentVelocity * Time.deltaTime);
 
-        if (Physics.CapsuleCast(lastBottomHemiSphere, lastTopHemiSphere, cc.radius,
+        if (!_isGrounded &&
+            Physics.CapsuleCast(lastBottomHemiSphere, lastTopHemiSphere, cc.radius,
             CurrentVelocity.normalized, out RaycastHit hit, CurrentVelocity.magnitude * Time.deltaTime, -1,
             QueryTriggerInteraction.Ignore))
         {

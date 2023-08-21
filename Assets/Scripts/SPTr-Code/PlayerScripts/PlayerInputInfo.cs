@@ -20,6 +20,7 @@ public class PlayerInputInfo : MonoBehaviour
     public bool Attack { get; private set; }
     public bool SlimeThrowing { get; private set; }
     public bool WeaponSkill { get; private set; }
+    public bool UseItem { get; private set; }
 
 
 
@@ -277,6 +278,7 @@ public class PlayerInputInfo : MonoBehaviour
         SprintHold = actions.InGames.Sprint.IsPressed();
         SprintReleased = actions.InGames.Sprint.WasReleasedThisFrame();
         SlimeThrowing = actions.InGames.SlimeThrowing.IsPressed();
+        UseItem = actions.InGames.UseItem.WasPressedThisFrame();
 
         #endregion
 
@@ -288,17 +290,14 @@ public class PlayerInputInfo : MonoBehaviour
         // 보정
 
         // 적용
+        Attack = false;
         if (!tg_attack && actions.InGames.Attack.ReadValue<float>() > 0.65f)
         {
             tg_attack = true;
             Attack = true;
         }
-        else
-        {
-            Attack = false;
-        }
         
-        if(tg_attack && actions.InGames.Attack.ReadValue<float>() < 0.4f)
+        if(tg_attack && actions.InGames.Attack.ReadValue<float>() < 0.1f)
         {
             tg_attack = false;
         }

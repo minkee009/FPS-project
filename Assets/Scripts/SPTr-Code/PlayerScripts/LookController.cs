@@ -259,8 +259,8 @@ public class LookController : MonoBehaviour
         AltCamHolder.localEulerAngles += _currentLocalRot;
 
         //UpdateCameraPositionToFollowTransform();
-        CurrentCameraPosition = Vector3.Lerp(CurrentCameraPosition, _followTransform.position, 1f - Mathf.Exp(-10000f * Time.deltaTime));
-        transform.position = CurrentCameraPosition;
+        //CurrentCameraPosition = Vector3.Lerp(CurrentCameraPosition, _followTransform.position, 1f - Mathf.Exp(-10000f * Time.deltaTime));
+        transform.position = _followTransform.position;
     }
 
     public Vector3 CurrentCameraPosition { get; private set; }
@@ -268,7 +268,7 @@ public class LookController : MonoBehaviour
     public void UpdateCameraPositionToFollowTransform()
     {
         CurrentCameraPosition = Vector3.Lerp(CurrentCameraPosition, _followTransform.position, 1f - Mathf.Exp(-10000f * Time.deltaTime));
-        transform.position = CurrentCameraPosition;
+        transform.position = _followTransform.position;
     }
 
 

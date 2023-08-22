@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Timers;
 using UnityEngine;
+using UnityEngine.InputSystem.XR;
 using UnityEngine.XR;
 
 // 목표 : 적을 FSM 다이어그램에 따라 동작시키고 싶다.
@@ -121,11 +122,22 @@ public class EnemyFSM : MonoBehaviour
         var dir = (_playerTransform.position - transform.position);
         var nonYDir = new Vector3(dir.x, 0f, dir.z).normalized;
         _targetVelocity = nonYDir * moveSpeed;
-        
-        if(new Vector3(dir.x,0f,dir.z).magnitude < attackDist)
+
+        if ((cc.collisionFlags & CollisionFlags.Sides) != 0)
+        {
+            forceAttackTimer += Time.deltaTime;
+        }
+
+        if (new Vector3(dir.x,0f,dir.z).magnitude < attackDist)
         {
             CurrentState = EnemyState.Attack;
         }
+        if (forceAttackTimer > 3f)
+        {
+            CurrentState = EnemyState.Attack;
+            forceAttackTimer = 0f;
+        }
+
 
         var nonYPos = new Vector3(transform.position.x, 0f, transform.position.z);
 
@@ -136,6 +148,7 @@ public class EnemyFSM : MonoBehaviour
     }
 
     float attackTimer = 0f;
+    float forceAttackTimer = 0f;
 
     private void OnControllerColliderHit(ControllerColliderHit hit)
     {

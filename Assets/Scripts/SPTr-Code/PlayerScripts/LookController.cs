@@ -251,8 +251,11 @@ public class LookController : MonoBehaviour
     private void LateUpdate()
     {
         //½ÃÁ¡°è»ê
-        OnUpdate(Time.deltaTime);
-
+        if(GameManager.instance.state == GameManager.GameState.Start)
+        {
+            OnUpdate(Time.deltaTime);
+        }
+        
         //ºäÆÝÄ¡°è»ê
         DecayPunchAngle();
         _currentLocalRot = Vector3.Lerp(_currentLocalRot, _vecPunchAngle, 25f * Time.deltaTime);

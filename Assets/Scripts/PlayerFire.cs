@@ -23,6 +23,10 @@ public class PlayerFire : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (GameManager.instance.state != GameManager.GameState.Start)
+        {
+            return;
+        }
         if (inputInfo.UseItem)
         {
             var bombGO = Instantiate(bomb);

@@ -76,6 +76,11 @@ public class MoveController : MonoBehaviour
     {
         var targetVelocity = Vector3.zero;
         var currentMoveInput = MoveStateExtensions.ComputeMoveVector(inputInfo.Move, lookCon);
+        if(GameManager.instance.state == GameManager.GameState.Ready)
+        {
+            currentMoveInput = Vector3.zero;
+        }
+
         if (_isGrounded)
         {
             var inputRight = Vector3.Cross(currentMoveInput, Vector3.up);

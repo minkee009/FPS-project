@@ -19,6 +19,10 @@ public class EnemyFSM : MonoBehaviour
 
     public CharacterController cc;
 
+    public Transform rootTransform;
+
+    public Animator modelAnimator;
+
     public HitableObj hitableObj;
 
     Transform _playerTransform;
@@ -52,6 +56,12 @@ public class EnemyFSM : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(GameManager.instance.state == GameManager.GameState.Ready || GameManager.instance.state == GameManager.GameState.GameOver)
+        {
+            _targetVelocity = Vector3.zero;
+            goto SkipState;
+        }
+
         switch (CurrentState)
         {
             case EnemyState.Idle:
@@ -73,6 +83,8 @@ public class EnemyFSM : MonoBehaviour
                 _targetVelocity = Vector3.zero;
                 break;
         }
+        
+        SkipState:
 
         if (!cc.isGrounded)
         {
@@ -101,6 +113,9 @@ public class EnemyFSM : MonoBehaviour
         {
             _currentVelocity = Vector3.ProjectOnPlane(_currentVelocity, hit.normal);
         }
+
+        var smoothDir = Vector3.Slerp(rootTransform.forward, new Vector3(_currentVelocity.x,0f,_currentVelocity.z).normalized, 15f * Time.deltaTime);
+        rootTransform.rotation = Quaternion.LookRotation(smoothDir, Vector3.up);
     }
 
     private void Idle()
@@ -112,12 +127,14 @@ public class EnemyFSM : MonoBehaviour
 
         if(nonYDir.magnitude < findDist)
         {
+            modelAnimator.ResetTrigger("isIdle");
             CurrentState = EnemyState.Move;
         }
     }
 
     private void Move()
     {
+        modelAnimator.SetTrigger("isMove");
         isAttacked = false;
         var dir = (_playerTransform.position - transform.position);
         var nonYDir = new Vector3(dir.x, 0f, dir.z).normalized;
@@ -130,10 +147,12 @@ public class EnemyFSM : MonoBehaviour
 
         if (new Vector3(dir.x,0f,dir.z).magnitude < attackDist)
         {
+            modelAnimator.ResetTrigger("isMove");
             CurrentState = EnemyState.Attack;
         }
         if (forceAttackTimer > 3f)
         {
+            modelAnimator.ResetTrigger("isMove");
             CurrentState = EnemyState.Attack;
             forceAttackTimer = 0f;
         }
@@ -143,6 +162,8 @@ public class EnemyFSM : MonoBehaviour
 
         if((nonYPos - _originPos).magnitude > returnDist)
         {
+            modelAnimator.ResetTrigger("isMove");
+            modelAnimator.SetTrigger("isReturn");
             CurrentState = EnemyState.Return;
         }
     }
@@ -156,6 +177,8 @@ public class EnemyFSM : MonoBehaviour
         {
             _validAttack = false;
             hitObj.Hit(-1, gameObject, false);
+            var lookCon = hit.gameObject.GetComponent<MoveController>().lookCon;
+            lookCon.AddViewPunch(Vector3.right * 26f + Vector3.up * UnityEngine.Random.Range(-12f,12f));
         }
         if (_validAttack && cc.isGrounded)
         {
@@ -169,6 +192,7 @@ public class EnemyFSM : MonoBehaviour
 
         if(attackTimer > attackDelay)
         {
+            modelAnimator.ResetTrigger("isAttack");
             attackTimer = 0f;
             CurrentState = EnemyState.Move;
             return;
@@ -178,6 +202,7 @@ public class EnemyFSM : MonoBehaviour
 
         if (!isAttacked && cc.isGrounded)
         {
+            modelAnimator.SetTrigger("isAttack");
             var dir = (_playerTransform.position - transform.position);
             var nonYDir = new Vector3(dir.x, 0f, dir.z).normalized;
             _currentVelocity = nonYDir * moveSpeed;
@@ -191,6 +216,7 @@ public class EnemyFSM : MonoBehaviour
 
     private void Return()
     {
+
         var nonYPos = new Vector3(transform.position.x, 0f, transform.position.z);
         var nonYDir = (_originPos - nonYPos).normalized;
 
@@ -200,13 +226,18 @@ public class EnemyFSM : MonoBehaviour
 
         if ((_originPos - nonYPos).magnitude < 0.1f)
         {
+            modelAnimator.SetTrigger("isIdle");
+            modelAnimator.ResetTrigger("isReturn");
             CurrentState = EnemyState.Idle;
         }
     }
      
     public void DamageAction()
     {
-        if(hitableObj.Hp <= 1)
+        _validAttack = false;
+        isAttacked = false;
+
+        if (hitableObj.Hp <= 1)
         {
             CurrentState = EnemyState.Die;
             Die();
@@ -227,6 +258,8 @@ public class EnemyFSM : MonoBehaviour
     private void Damaged()
     {
         //피격 모션 0.5
+        modelAnimator.ResetTrigger("isMove");
+        modelAnimator.SetTrigger("isDamaged");
 
         //피격 상태 처리를 위한 코루틴 실행
         StartCoroutine(DamageProcess());
@@ -235,6 +268,7 @@ public class EnemyFSM : MonoBehaviour
     IEnumerator DamageProcess()
     {
         yield return new WaitForSeconds(0.5f);
+        modelAnimator.SetTrigger("isMove");
         CurrentState = EnemyState.Move;
     }
 
@@ -247,6 +281,7 @@ public class EnemyFSM : MonoBehaviour
     private void Die()
     {
         _targetVelocity = Vector3.zero;
+        modelAnimator.SetTrigger("isDie");
         StopAllCoroutines();
         StartCoroutine(DieProcess());
     }

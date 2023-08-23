@@ -9,6 +9,9 @@ public class PlayerFire : MonoBehaviour
     public GameObject bomb;
     public GameObject firePosition;
     public GameObject hitEffect;
+    public LookController lookCon;
+
+    public Animator playerAnimator;
 
     public LayerMask bulletRayLayerMask;
 
@@ -44,6 +47,13 @@ public class PlayerFire : MonoBehaviour
         if (Physics.Raycast(bulletRay, out _hitInfo, 25f, bulletRayLayerMask, QueryTriggerInteraction.Ignore))
         {
             hitPosition = _hitInfo.point;
+        }
+
+        if (inputInfo.Attack)
+        {
+            playerAnimator.SetTrigger("Shoot");
+            lookCon.AddViewPunch(Vector3.right * -4f + Vector3.up * UnityEngine.Random.Range(-3f, 3f));
+            //playerAnimator.ResetTrigger("Shoot");
         }
 
         if (inputInfo.Attack && _hitInfo.transform != null)

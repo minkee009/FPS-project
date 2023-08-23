@@ -5,6 +5,8 @@ using System.Timers;
 using UnityEngine;
 using UnityEngine.InputSystem.XR;
 using UnityEngine.XR;
+using UnityEngine.AI;
+using UnityEngine.UIElements;
 
 // 목표 : 적을 FSM 다이어그램에 따라 동작시키고 싶다.
 // 필요 속성 : 적 상태,상태 기계
@@ -24,6 +26,10 @@ public class EnemyFSM : MonoBehaviour
     public Animator modelAnimator;
 
     public HitableObj hitableObj;
+
+    public NavMeshAgent agent;
+
+    NavMeshPath _path;
 
     Transform _playerTransform;
     public float findDist = 5f;
@@ -45,12 +51,14 @@ public class EnemyFSM : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        agent.enabled = false;
         CurrentState = EnemyState.Idle;
         _originPos = new Vector3(transform.position.x,0f,transform.position.z);
         hitableObj = GetComponent<HitableObj>();
         hitableObj.OnHit += DamageAction;
         cc = GetComponent<CharacterController>();
         _playerTransform = GameObject.Find("Actor").transform;
+        _path = new NavMeshPath();
     }
 
     // Update is called once per frame
@@ -83,7 +91,9 @@ public class EnemyFSM : MonoBehaviour
                 _targetVelocity = Vector3.zero;
                 break;
         }
+
         
+
         SkipState:
 
         if (!cc.isGrounded)
@@ -104,6 +114,7 @@ public class EnemyFSM : MonoBehaviour
         var lastBottomHemiSphere = GetBottomHemiSphere();
         var lastTopHemiSphere = GetTopHemiSphere();
 
+        if(!agent.enabled)
         cc.Move(_currentVelocity * Time.deltaTime);
 
         if (!cc.isGrounded &&
@@ -120,6 +131,7 @@ public class EnemyFSM : MonoBehaviour
 
     private void Idle()
     {
+        agent.enabled = false;
         _targetVelocity = Vector3.zero;
 
         var nonYDir = (_playerTransform.position - transform.position);
@@ -134,12 +146,20 @@ public class EnemyFSM : MonoBehaviour
 
     private void Move()
     {
+        agent.enabled = cc.isGrounded;
         modelAnimator.SetTrigger("isMove");
         isAttacked = false;
         var dir = (_playerTransform.position - transform.position);
         var nonYDir = new Vector3(dir.x, 0f, dir.z).normalized;
+
         _targetVelocity = nonYDir * moveSpeed;
 
+        if (agent.enabled)
+        {
+            agent.destination = _playerTransform.position;
+            _targetVelocity = agent.desiredVelocity;
+        }
+            
         if ((cc.collisionFlags & CollisionFlags.Sides) != 0)
         {
             forceAttackTimer += Time.deltaTime;
@@ -156,6 +176,8 @@ public class EnemyFSM : MonoBehaviour
             CurrentState = EnemyState.Attack;
             forceAttackTimer = 0f;
         }
+
+        
 
 
         var nonYPos = new Vector3(transform.position.x, 0f, transform.position.z);
@@ -188,6 +210,8 @@ public class EnemyFSM : MonoBehaviour
 
     private void Attack()
     {
+        agent.enabled = false;
+
         attackTimer += Time.deltaTime;
 
         if(attackTimer > attackDelay)
@@ -216,13 +240,19 @@ public class EnemyFSM : MonoBehaviour
 
     private void Return()
     {
-
+        agent.enabled = cc.isGrounded;
         var nonYPos = new Vector3(transform.position.x, 0f, transform.position.z);
         var nonYDir = (_originPos - nonYPos).normalized;
 
         var toPlayerDir = (_playerTransform.position - transform.position);
 
         _targetVelocity = nonYDir * moveSpeed;
+
+        if (agent.enabled)
+        {
+            agent.destination = _originPos;
+            _targetVelocity = agent.desiredVelocity;
+        }
 
         if ((_originPos - nonYPos).magnitude < 0.1f)
         {
@@ -282,6 +312,7 @@ public class EnemyFSM : MonoBehaviour
     {
         _targetVelocity = Vector3.zero;
         modelAnimator.SetTrigger("isDie");
+        agent.enabled = false;
         StopAllCoroutines();
         StartCoroutine(DieProcess());
     }

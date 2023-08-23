@@ -164,7 +164,7 @@ public class LookController : MonoBehaviour
     {
         if (_inputInfo.WeaponSkill)
         {
-            SetCameraFov(-15f, 9f);
+            SetCameraFov(-48f, 12f);
         }
         else if (_inputInfo.SlimeThrowing)
         {

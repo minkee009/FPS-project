@@ -9,6 +9,7 @@ public class MoveController : MonoBehaviour
     public LookController lookCon;
     public PlayerInputInfo inputInfo;
     public CharacterController cc;
+    public Animator playerAnimator;
 
     public float moveSpeed = 5f;
     public float moveSharpness = 12f;
@@ -29,6 +30,8 @@ public class MoveController : MonoBehaviour
     float _lastTimeJumped;
     float _inAirTime;
 
+    float _inputSmooth;
+
     public Vector3 CurrentVelocity { get; private set; }
 
     // Update is called once per frame
@@ -39,6 +42,10 @@ public class MoveController : MonoBehaviour
         _wasGrounded = _isGrounded;
         GroundCheck();
         HandleMovement();
+
+        _inputSmooth = Mathf.Lerp(_inputSmooth, (cc.velocity.magnitude / moveSpeed) * inputInfo.Move.magnitude * (_isGrounded ? 1f : 0f), 8f * Time.deltaTime);
+
+        playerAnimator.SetFloat("MoveMotion", _inputSmooth);
     }
 
     void GroundCheck()
@@ -124,7 +131,7 @@ public class MoveController : MonoBehaviour
 
         cc.Move(CurrentVelocity * Time.deltaTime);
 
-        if (!_isGrounded &&
+        if (!_wasGrounded &&
             Physics.CapsuleCast(lastBottomHemiSphere, lastTopHemiSphere, cc.radius,
             CurrentVelocity.normalized, out RaycastHit hit, CurrentVelocity.magnitude * Time.deltaTime, -1,
             QueryTriggerInteraction.Ignore))

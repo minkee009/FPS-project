@@ -1910,6 +1910,7 @@ MonoBehaviour:
   bomb: {fileID: 761544270363563812, guid: 2c4afcb22828a62409806bdf8eda222c, type: 3}
   firePosition: {fileID: 839447878}
   hitEffect: {fileID: 2131106145}
+  lookCon: {fileID: 520833289}
   playerAnimator: {fileID: 1097660722}
   bulletRayLayerMask:
     serializedVersion: 2

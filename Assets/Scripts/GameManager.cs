@@ -4,6 +4,7 @@ using System.Runtime.Serialization;
 using UnityEngine;
 using TMPro;
 using Unity.VisualScripting;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -41,7 +42,6 @@ public class GameManager : MonoBehaviour
         stateText.text = "Ready";
         stateText.color = new Color(255, 185, 0, 255);
         StartCoroutine(StartGame());
-        playerHit = GameObject.Find("Actor").GetComponent<HitableObj>();
     }
 
     private void Update()
@@ -63,7 +63,31 @@ public class GameManager : MonoBehaviour
 
         yield return new WaitForSeconds(0.5f);
 
+        playerHit = GameObject.Find("Actor").GetComponent<HitableObj>();
         stateText.color = new Color(255, 255, 255, 0f);
         state = GameState.Start;
+    }
+
+    public void SetPause()
+    {
+        Time.timeScale = 0.0f;
+    }
+
+    public void SetPlay()
+    {
+        Time.timeScale = 1.0f;
+    }
+
+    public void RestartGame()
+    {
+        StopAllCoroutines();
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        SetPlay();
+
+        state = GameState.Ready;
+        stateText.text = "Ready";
+        stateText.color = new Color(255, 185, 0, 255);
+        StartCoroutine(StartGame());
+       
     }
 }

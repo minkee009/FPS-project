@@ -32,14 +32,6 @@ public class HitableObj : MonoBehaviour
         _hp = maxHp;
     }
 
-    private void Update()
-    {
-        if (_hp <= 0f)
-        {
-            Die();
-        }
-    }
-
     public void IncOrDecHp(float value)
     {
         _hp = Mathf.Clamp(_hp + value, 0f, maxHp);
@@ -48,7 +40,6 @@ public class HitableObj : MonoBehaviour
     public void Hit(float value, GameObject from, bool playHitEffect = true)
     {
         if (_massageTrigger) return ;
-        OnHit?.Invoke();
 
         if (playHitEffect && hitEffect != null)
         {
@@ -57,6 +48,13 @@ public class HitableObj : MonoBehaviour
         }
 
         IncOrDecHp(value);
+
+        OnHit?.Invoke();
+
+        if (Hp == 0f)
+        {
+            Die();
+        }
 
         Debug.Log(gameObject.name + "이(가) 히트판정을 받음 | 다음 오브젝트가 히트시도 : " + from.name);
     }

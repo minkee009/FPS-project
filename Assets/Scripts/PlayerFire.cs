@@ -29,7 +29,8 @@ public class PlayerFire : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (GameManager.instance.state != GameManager.GameState.Start)
+        if (GameManager.instance.state != GameManager.GameState.Start
+            || Cursor.lockState != CursorLockMode.Locked)
         {
             return;
         }

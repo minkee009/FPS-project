@@ -52,9 +52,16 @@ public class MoveController : MonoBehaviour
 
     public UnityAction<float> onPlayerLanded;
 
+    private void Start()
+    {
+        GameManager.instance.playerHit = GetComponent<HitableObj>();
+    }
+
     // Update is called once per frame
     void Update()
     {
+        if (Time.timeScale <= 0.0f) return;
+
         //회전설정
         transform.rotation = lookCon.CamHolder.rotation;
         _wasGrounded = _isGrounded;

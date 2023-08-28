@@ -1,3 +1,4 @@
+using OpenCover.Framework.Model;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -56,12 +57,13 @@ public class LookController : MonoBehaviour
     const float PUNCH_DAMPING = 9.0f;
     const float PUNCH_SPRING_CONSTANT = 65.0f;
 
+    bool _hideMouse;
 
     public void InitializeController()
     {
         CamHolder = this.transform;
         AltCamHolder = this.transform.GetChild(0);
-        Cursor.lockState = CursorLockMode.Locked;
+        _hideMouse = true;
         CurrentCameraPosition = _followTransform.position;
 
         CurrentCamFOV = DefaultCamFOV;
@@ -178,6 +180,22 @@ public class LookController : MonoBehaviour
         {
             ChangeFov();
         }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            _hideMouse = !_hideMouse;
+        }
+
+        switch (_hideMouse)
+        {
+            case true:
+                Cursor.lockState = CursorLockMode.Locked;
+                break;
+            case false:
+                Cursor.lockState = CursorLockMode.None;
+                break;
+        }
+
         /*if (Input.GetKeyDown(KeyCode.Mouse0))
         {
             Vector3 a = new Vector3(-8, Random.Range(-2.0f, 2.0f), 0);
@@ -196,6 +214,12 @@ public class LookController : MonoBehaviour
         var fovFactor = CurrentCamFOV / DefaultCamFOV;
         var lookY = _inputInfo.Look.y * fovFactor;
         var lookX = _inputInfo.Look.x * fovFactor;
+
+        if (!_hideMouse)
+        {
+            lookX = 0f;
+            lookY = 0f;
+        }
 
         //수평잠금각도 선형보간
         if (_clampHorizontalAngle)
@@ -241,6 +265,8 @@ public class LookController : MonoBehaviour
 
         _lastHoriValue = _clampHori;
         _lastVertValue = _clampVert;
+
+        SkipUpdateLogic:
 
         // 최종 각도 대입
         AltCamHolder.localRotation = Quaternion.Euler(_clampVert, 0f, 0f);

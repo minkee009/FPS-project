@@ -10,6 +10,9 @@ public class PlayerFire : MonoBehaviour
     public GameObject firePosition;
     public GameObject hitEffect;
     public LookController lookCon;
+    public Transform muzzlePos;
+
+    public GameObject[] muzzleFlashEffects;
 
     public Animator playerAnimator;
 
@@ -30,7 +33,7 @@ public class PlayerFire : MonoBehaviour
         {
             return;
         }
-        if (inputInfo.UseItem)
+        if (inputInfo.UseItem || Input.GetMouseButtonDown(2))
         {
             var bombGO = Instantiate(bomb);
             bombGO.transform.position = transform.position;
@@ -41,10 +44,10 @@ public class PlayerFire : MonoBehaviour
             rb.AddForce(transform.forward * 12f, ForceMode.VelocityChange);
         }
 
-        var hitPosition = transform.parent.position + transform.parent.forward * 25f;
+        var hitPosition = transform.parent.position + transform.parent.forward * 60f;
         var bulletRay = new Ray(transform.parent.position, transform.parent.forward);
 
-        if (Physics.Raycast(bulletRay, out _hitInfo, 25f, bulletRayLayerMask, QueryTriggerInteraction.Ignore))
+        if (Physics.Raycast(bulletRay, out _hitInfo, Mathf.Infinity, bulletRayLayerMask, QueryTriggerInteraction.Ignore))
         {
             hitPosition = _hitInfo.point;
         }
@@ -53,6 +56,10 @@ public class PlayerFire : MonoBehaviour
         {
             playerAnimator.SetTrigger("Shoot");
             lookCon.AddViewPunch(Vector3.right * -4f + Vector3.up * UnityEngine.Random.Range(-3f, 3f));
+
+            var effect = Instantiate(muzzleFlashEffects[Random.Range(0, muzzleFlashEffects.Length - 1)],muzzlePos);
+            effect.transform.position = muzzlePos.position;
+            effect.transform.rotation = muzzlePos.rotation;
             //playerAnimator.ResetTrigger("Shoot");
         }
 

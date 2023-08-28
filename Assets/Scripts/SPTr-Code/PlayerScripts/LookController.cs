@@ -231,8 +231,7 @@ public class LookController : MonoBehaviour
             _clampHori = transform.eulerAngles.y + lookX;
         }
 
-
-
+        //내가 왜이랬을까.
         changedHori = ((_lastHoriValue - _clampHori >= 0) ? _lastHoriValue - _clampHori : -(_lastHoriValue - _clampHori)) > 0f
             ? lookX
             : 0f;
@@ -291,11 +290,6 @@ public class LookController : MonoBehaviour
             float springForceMag = PUNCH_SPRING_CONSTANT * Time.deltaTime;
             springForceMag = Mathf.Clamp(springForceMag, 0f, 2f);
             _vecPunchAngleVel -= _vecPunchAngle * springForceMag;
-
-            _vecPunchAngle = new Vector3(
-                Mathf.Clamp(_vecPunchAngle.x, -89f, 89f),
-                Mathf.Clamp(_vecPunchAngle.y, -179f, 179f),
-                Mathf.Clamp(_vecPunchAngle.z, -89f, 89f));
         }
         else
         {

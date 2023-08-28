@@ -7,6 +7,7 @@ using UnityEngine.InputSystem.XR;
 using UnityEngine.XR;
 using UnityEngine.AI;
 using UnityEngine.UIElements;
+using UnityEngine.UI;
 
 // 목표 : 적을 FSM 다이어그램에 따라 동작시키고 싶다.
 // 필요 속성 : 적 상태,상태 기계
@@ -28,8 +29,6 @@ public class EnemyFSM : MonoBehaviour
     public HitableObj hitableObj;
 
     public NavMeshAgent agent;
-
-    NavMeshPath _path;
 
     Transform _playerTransform;
     public float findDist = 5f;
@@ -58,7 +57,6 @@ public class EnemyFSM : MonoBehaviour
         hitableObj.OnHit += DamageAction;
         cc = GetComponent<CharacterController>();
         _playerTransform = GameObject.Find("Actor").transform;
-        _path = new NavMeshPath();
     }
 
     // Update is called once per frame
@@ -101,10 +99,10 @@ public class EnemyFSM : MonoBehaviour
             if(_targetVelocity.sqrMagnitude > 0f)
             {
                 Vector3 velocityDiff = Vector3.ProjectOnPlane(_targetVelocity - _currentVelocity, Vector3.down * 20f);
-                _currentVelocity += velocityDiff * airAcceleration * Time.deltaTime;
+                _currentVelocity += velocityDiff * (airAcceleration * Time.deltaTime);
             }
             _currentVelocity *= (1f / (1f + (drag * Time.deltaTime)));
-            _currentVelocity += Vector3.down * gravityForce * Time.deltaTime;
+            _currentVelocity += Vector3.down * (gravityForce * Time.deltaTime);
         }
         else
         {
@@ -115,7 +113,7 @@ public class EnemyFSM : MonoBehaviour
         var lastTopHemiSphere = GetTopHemiSphere();
 
         if(!agent.enabled)
-        cc.Move(_currentVelocity * Time.deltaTime);
+            cc.Move(_currentVelocity * Time.deltaTime);
 
         if (!cc.isGrounded &&
             Physics.CapsuleCast(lastBottomHemiSphere, lastTopHemiSphere, cc.radius,
@@ -243,8 +241,6 @@ public class EnemyFSM : MonoBehaviour
         agent.enabled = cc.isGrounded;
         var nonYPos = new Vector3(transform.position.x, 0f, transform.position.z);
         var nonYDir = (_originPos - nonYPos).normalized;
-
-        var toPlayerDir = (_playerTransform.position - transform.position);
 
         _targetVelocity = nonYDir * moveSpeed;
 

@@ -1,11 +1,12 @@
-using OpenCover.Framework.Model;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 using UnityEngine.InputSystem;
 public class LookController : MonoBehaviour
 {
+    public Image sniperCrosshair;
+    public Image crosshair;
+
     private float _maxVerticalAngle = 90f;
     private float _maxHorizontalAngle = 45f;
     private float _lerpClampHoriTime = 6f;
@@ -164,22 +165,10 @@ public class LookController : MonoBehaviour
 
     private void Update()
     {
-        if (_inputInfo.WeaponSkill)
-        {
-            SetCameraFov(-48f, 12f);
-        }
-        else if (_inputInfo.SlimeThrowing)
-        {
-            SetCameraFov(-8f, 5f);
-        }
-        else
-        {
-            SetCameraFov(0f, 8f);
-        }
-        if (Keyboard.current.pKey.wasPressedThisFrame)
-        {
-            ChangeFov();
-        }
+        //var colorT = Mathf.Clamp((CurrentCamFOV - 27) / 48,0.3,)
+
+        sniperCrosshair.color = new Color(1,1,1,1 - (CurrentCamFOV - 27) / 48);
+        crosshair.color = new Color(1, 1, 1, (CurrentCamFOV - 27) / 48);
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
@@ -266,8 +255,6 @@ public class LookController : MonoBehaviour
         _lastHoriValue = _clampHori;
         _lastVertValue = _clampVert;
 
-        SkipUpdateLogic:
-
         // 최종 각도 대입
         AltCamHolder.localRotation = Quaternion.Euler(_clampVert, 0f, 0f);
         CamHolder.localRotation = Quaternion.Euler(0f, _clampHori, 0f);
@@ -278,6 +265,23 @@ public class LookController : MonoBehaviour
         //시점계산
         if(GameManager.instance.state == GameManager.GameState.Start)
         {
+            if (_inputInfo.WeaponSkill)
+            {
+                SetCameraFov(-48f, 12f);
+            }
+            else if (_inputInfo.SlimeThrowing)
+            {
+                SetCameraFov(-8f, 5f);
+            }
+            else
+            {
+                SetCameraFov(0f, 8f);
+            }
+            if (Keyboard.current.pKey.wasPressedThisFrame)
+            {
+                ChangeFov();
+            }
+
             OnUpdate(Time.deltaTime);
         }
         

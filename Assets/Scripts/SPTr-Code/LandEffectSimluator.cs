@@ -36,7 +36,7 @@ public class LandEffectSimluator : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (doSimulateMotion)
+        if (doSimulateMotion && Time.timeScale > 0.0f)
         {
             //SpringForce ±¸ÇÏ±â
             var springForce = -springFactor * ((_internalYPosition - anchoringPointYpos) - maxLength);

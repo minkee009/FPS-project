@@ -86,7 +86,7 @@ public class ProceduralViewModelAnimator : MonoBehaviour
 
         _localSwayPos = Vector3.Lerp(_localSwayPos, newPos, handlingSharpness * Time.smoothDeltaTime);
 
-        var clampedSwayPos = _localSwayPos + Vector3.up * _landEffecter.Yvalue;
+        var clampedSwayPos = _localSwayPos+ Vector3.up * _landEffecter.Yvalue;
         for (int i = 0; i < 3; i++)
         {
             if (Mathf.Abs(clampedSwayPos[i]) < 0.001f * scaler)
@@ -110,6 +110,7 @@ public class ProceduralViewModelAnimator : MonoBehaviour
 
         //최종 적용
         transform.SetLocalPositionAndRotation(clampedSwayPos, _localSwayRot);
+
         //_frameRateTime = 0f;
     }
 
@@ -120,6 +121,15 @@ public class ProceduralViewModelAnimator : MonoBehaviour
 
         _targetSwayX = Mathf.Clamp(_targetSwayX, -maxSwayAmount, maxSwayAmount);
         _targetSwayY = Mathf.Clamp(_targetSwayY, -maxSwayAmount, maxSwayAmount);
+
+        if (float.IsNaN(_targetSwayX))
+        {
+            _targetSwayX = 0.0f;
+        }
+        if (float.IsNaN(_targetSwayY))
+        {
+            _targetSwayY = 0.0f;
+        }
 
         _swayX = Mathf.Lerp(_swayX, _targetSwayX, _inputLerpSpeed * Time.deltaTime);
         _swayY = Mathf.Lerp(_swayY, _targetSwayY, _inputLerpSpeed * Time.deltaTime);

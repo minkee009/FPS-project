@@ -7,7 +7,7 @@ public class LookController : MonoBehaviour
     public Image sniperCrosshair;
     public Image crosshair;
 
-    private float _maxVerticalAngle = 90f;
+    private readonly float _maxVerticalAngle = 90f;
     private float _maxHorizontalAngle = 45f;
     private float _lerpClampHoriTime = 6f;
     private float _lerpClampVertTime = 6f;
@@ -40,8 +40,8 @@ public class LookController : MonoBehaviour
     public float CamFovLerpTime { private set; get; }
     private bool isFixedFovValue = false;
 
-    public float changedHori { get; private set; }
-    public float changedVert { get; private set; }
+    public float ChangedHori { get; private set; }
+    public float ChangedVert { get; private set; }
 
     //트랜스폼
     public Transform CamHolder { get; private set; }
@@ -53,7 +53,7 @@ public class LookController : MonoBehaviour
     Vector3 _currentLocalRot;
 
 
-    public Vector3 PunchForce = new Vector3(25f, 0f, 0f);
+    public Vector3 PunchForce = new (25f, 0f, 0f);
 
     const float PUNCH_DAMPING = 9.0f;
     const float PUNCH_SPRING_CONSTANT = 65.0f;
@@ -167,8 +167,8 @@ public class LookController : MonoBehaviour
     {
         //var colorT = Mathf.Clamp((CurrentCamFOV - 27) / 48,0.3,)
 
-        sniperCrosshair.color = new Color(1,1,1,1 - (CurrentCamFOV - 27) / 48);
-        crosshair.color = new Color(1, 1, 1, (CurrentCamFOV - 27) / 48);
+        sniperCrosshair.color = new Color(1,1,1,1 - (CurrentCamFOV - 19) / 56);
+        crosshair.color = new Color(1, 1, 1, (CurrentCamFOV - 19) / 56);
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
@@ -245,10 +245,10 @@ public class LookController : MonoBehaviour
         }
 
         //내가 왜이랬을까.
-        changedHori = ((_lastHoriValue - _clampHori >= 0) ? _lastHoriValue - _clampHori : -(_lastHoriValue - _clampHori)) > 0f
+        ChangedHori = ((_lastHoriValue - _clampHori >= 0) ? _lastHoriValue - _clampHori : -(_lastHoriValue - _clampHori)) > 0f
             ? lookX
             : 0f;
-        changedVert = ((_lastVertValue - _clampVert >= 0) ? _lastVertValue - _clampVert : -(_lastVertValue - _clampVert)) > 0f
+        ChangedVert = ((_lastVertValue - _clampVert >= 0) ? _lastVertValue - _clampVert : -(_lastVertValue - _clampVert)) > 0f
             ? lookY
             : 0f;
 
@@ -267,7 +267,7 @@ public class LookController : MonoBehaviour
         {
             if (_inputInfo.WeaponSkill)
             {
-                SetCameraFov(-48f, 12f);
+                SetCameraFov(-56f, 12f);
             }
             else if (_inputInfo.SlimeThrowing)
             {

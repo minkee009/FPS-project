@@ -77,7 +77,7 @@ public class ProceduralViewModelAnimator : MonoBehaviour
         if (Time.timeScale <= 0.0f) return;
 
         //인풋 읽기
-        SwayInput(new Vector2(_lookCon.changedHori, _lookCon.changedVert));
+        SwayInput(new Vector2(_lookCon.ChangedHori, _lookCon.ChangedVert));
         TiltHandDir();
 
         //알고리즘 수행

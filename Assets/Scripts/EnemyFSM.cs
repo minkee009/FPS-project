@@ -1,14 +1,6 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Timers;
 using UnityEngine;
-using UnityEngine.InputSystem.XR;
-using UnityEngine.XR;
 using UnityEngine.AI;
-using UnityEngine.UIElements;
-using UnityEngine.UI;
-using TMPro.EditorUtilities;
 
 // 목표 : 적을 FSM 다이어그램에 따라 동작시키고 싶다.
 // 필요 속성 : 적 상태,상태 기계

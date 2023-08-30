@@ -5,10 +5,22 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Login Scene.unity
     guid: c6168f97a96bec34493b88488d7362c7
-  - enabled: 1
+  - enabled: 0
+    path: Assets/Scenes/Loading Scene.unity
+    guid: 09ecef4234b17a244b734854c0472215
+  - enabled: 0
     path: Assets/Scenes/SampleScene.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
+  - enabled: 1
+    path: Assets/Scenes/Photon Scene/ConnectScene.unity
+    guid: 83a8d8a3964f26847a8c4d271202422d
+  - enabled: 1
+    path: Assets/Scenes/Photon Scene/LobbyScene.unity
+    guid: 76ef80adfe659414da513a7ace794d1d
+  - enabled: 1
+    path: Assets/Scenes/Photon Scene/GameScene.unity
+    guid: 4f293f41ce8bbad4e8b6edad2e8957f6
   m_configObjects: {}

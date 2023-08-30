@@ -1,10 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using TMPro.EditorUtilities;
-using UnityEditor.Timeline;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.InputSystem.HID;
 
 public class MoveController : MonoBehaviour
 {
